@@ -1,18 +1,21 @@
 <script lang="ts">
+  import { getPossibilities } from "../helpers/possibilities";
+
   import {
     currentPlayerStore,
     boardStore,
-    BoardType,
     selectedPieceStore,
-    CoordType,
+    possibilitiesStore,
   } from "../stores";
+  import { CellType, CoordType } from "../types";
 
   export let line: number;
   export let col: number;
 
   let currentPlayer: "black" | "white";
-  let board: BoardType;
+  let board: CellType[][];
   let selectedPiece: CoordType;
+  let possibilities: CoordType[];
 
   currentPlayerStore.subscribe((value) => {
     currentPlayer = value;
@@ -26,30 +29,42 @@
     selectedPiece = value;
   });
 
+  possibilitiesStore.subscribe((value) => {
+    possibilities = value;
+  });
+
   let isSelected;
   $: isSelected = line === selectedPiece?.line && col === selectedPiece?.col;
 
   const handlePieceClick: () => void = () => {
     if (box.piece?.color === currentPlayer) {
       selectedPieceStore.set(isSelected ? undefined : { line, col });
+      possibilitiesStore.set(getPossibilities(board, selectedPiece));
     }
   };
 
   const handleBoxClick: () => void = () => {
-    console.log(!box.piece, box.background === "black", !!selectedPiece);
     if (!box.piece && box.background === "black" && selectedPiece) {
-      console.log(selectedPiece.line, selectedPiece.col, line, col)
       boardStore.movePiece(selectedPiece.line, selectedPiece.col, line, col);
       selectedPieceStore.set(undefined);
       currentPlayerStore.change();
+      possibilitiesStore.set(undefined);
     }
   };
 
-  let box;
+  let box: CellType;
   $: box = board[line][col];
+  let isPossibility;
+  $: isPossibility = !!possibilities?.find(
+    (p) => p.line === line && p.col === col
+  );
+  $: console.log(isPossibility);
 </script>
 
-<div class={"box"} on:click={() => handleBoxClick()}>
+<div
+  class={`box${isPossibility ? " possible" : ""}`}
+  on:click={() => handleBoxClick()}
+>
   {#if box.piece}
     <div
       class={`pawn pawn-${isSelected ? "selected" : box.piece.color}`}
@@ -68,11 +83,12 @@
   }
 
   .pawn {
-    width: 3rem;
-    min-width: 3rem;
-    height: 3rem;
-    min-height: 3rem;
-    border-radius: 1.5rem;
+    width: 2.5rem;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    min-height: 2.5rem;
+    border-radius: 1.25rem;
+    border: 1px solid grey;
   }
 
   .pawn-white {
@@ -80,11 +96,19 @@
   }
 
   .pawn-black {
-    background-color: #391939;
-    border: 1px solid grey;
+    background-color: brown;
   }
 
   .pawn-selected {
     background-color: purple;
+  }
+  .possible {
+    width: 2.5rem;
+    min-width: 2.5rem;
+    height: 2.5rem;
+    min-height: 2.5rem;
+    border-radius: 1.25rem;
+    border: 3px dashed salmon;
+    margin: auto;
   }
 </style>

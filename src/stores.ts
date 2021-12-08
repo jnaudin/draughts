@@ -1,5 +1,6 @@
 import { Writable, writable } from "svelte/store";
 import { getSize } from "./helpers/utils";
+import type { CoordType } from "./types";
 
 const createCurrentPlayer = () => {
   const { subscribe, set, update }: Writable<"black" | "white"> =
@@ -17,18 +18,11 @@ const createCurrentPlayer = () => {
 
 export const currentPlayerStore = createCurrentPlayer();
 
-export type CoordType = {
-  line: number;
-  col: number;
-};
-
 export const selectedPieceStore: Writable<CoordType | undefined> =
   writable(undefined);
 
-export type BoardType = {
-  background: string;
-  piece?: { color: string; type: string };
-}[][];
+export const possibilitiesStore: Writable<CoordType[] | undefined> =
+  writable(undefined);
 
 const getInitialBoard = () =>
   new Array(getSize(false)).fill(0).map((_val, lineIndex) =>
