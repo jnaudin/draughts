@@ -8,8 +8,14 @@ export const getPossibilities = (
   const pieceToMove = board[line][col];
   const direction = pieceToMove.piece.color === "black" ? 1 : -1;
 
-  return [
-    { line: line + direction, col: col - 1 },
-    { line: line + direction, col: col + 1 },
-  ];
+  const leftMove =
+    col > 0 && !!board[line + direction][col - 1].piece
+      ? []
+      : [{ line: line + direction, col: col - 1 }];
+  const rightMove =
+    col < 7 && !!board[line + direction][col + 1].piece
+      ? []
+      : [{ line: line + direction, col: col + 1 }];
+
+  return [...leftMove, ...rightMove];
 };

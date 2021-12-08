@@ -44,7 +44,10 @@
   };
 
   const handleBoxClick: () => void = () => {
-    if (!box.piece && box.background === "black" && selectedPiece) {
+    if (
+      selectedPiece &&
+      possibilities?.find((p) => p.line === line && p.col === col)
+    ) {
       boardStore.movePiece(selectedPiece.line, selectedPiece.col, line, col);
       selectedPieceStore.set(undefined);
       currentPlayerStore.change();
