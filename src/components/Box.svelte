@@ -16,6 +16,7 @@
   let board: CellType[][];
   let selectedPiece: CoordType;
   let possibilities: CoordType[];
+  let isAdditionalMove: boolean = false;
 
   currentPlayerStore.subscribe((value) => {
     currentPlayer = value;
@@ -36,8 +37,11 @@
   let isSelected;
   $: isSelected = line === selectedPiece?.line && col === selectedPiece?.col;
 
+  let box: CellType;
+  $: box = board[line][col];
+
   const handlePieceClick: () => void = () => {
-    if (box.piece?.color === currentPlayer) {
+    if (!isAdditionalMove && box.piece?.color === currentPlayer) {
       if (isSelected) possibilitiesStore.set(undefined);
       selectedPieceStore.set(isSelected ? undefined : { line, col });
       possibilitiesStore.set(getPossibilities(board, selectedPiece));
@@ -50,19 +54,26 @@
       possibilities?.find((p) => p.line === line && p.col === col)
     ) {
       boardStore.movePiece(selectedPiece.line, selectedPiece.col, line, col);
-      if (Math.abs((line - selectedPiece.line) / 2) === 1)
+      if (Math.abs((line - selectedPiece.line) / 2) === 1) {
         boardStore.removePiece(
           (selectedPiece.line + line) / 2,
           (selectedPiece.col + col) / 2
         );
-      selectedPieceStore.set(undefined);
-      currentPlayerStore.change();
-      possibilitiesStore.set(undefined);
+        const newPossibilities = getPossibilities(board, { line, col }, true);
+        if (newPossibilities.length) {
+          isAdditionalMove = true;
+          selectedPieceStore.set({ line, col });
+          possibilitiesStore.set(newPossibilities);
+        }
+      }
+      if (!isAdditionalMove) {
+        selectedPieceStore.set(undefined);
+        currentPlayerStore.change();
+        possibilitiesStore.set(undefined);
+      }
     }
   };
 
-  let box: CellType;
-  $: box = board[line][col];
   let isPossibility;
   $: isPossibility = !!possibilities?.find(
     (p) => p.line === line && p.col === col

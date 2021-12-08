@@ -2,7 +2,8 @@ import type { CellType, CoordType } from "../types";
 
 export const getPossibilities = (
   board: CellType[][],
-  selectedPiece: CoordType
+  selectedPiece: CoordType,
+  isAdditionalMove: boolean = false
 ): CoordType[] => {
   if (!selectedPiece) return [];
 
@@ -13,6 +14,7 @@ export const getPossibilities = (
   const nextMoveLine = line + direction;
 
   const leftMove =
+    !isAdditionalMove &&
     nextMoveLine !== -1 &&
     nextMoveLine !== 10 &&
     col > 0 &&
@@ -20,6 +22,7 @@ export const getPossibilities = (
       ? [{ line: nextMoveLine, col: col - 1 }]
       : [];
   const rightMove =
+    !isAdditionalMove &&
     nextMoveLine !== -1 &&
     nextMoveLine !== 10 &&
     col < 9 &&
@@ -27,41 +30,32 @@ export const getPossibilities = (
       ? [{ line: nextMoveLine, col: col + 1 }]
       : [];
 
-  const topLeftTake =
-    col > 1 &&
-    line > 1 &&
-    board[line - 1][col - 1]?.piece?.color === oppositeColor &&
-    !board[line - 2][col - 2].piece
-      ? [{ line: line - 2, col: col - 2 }]
-      : [];
-  const topRightTake =
-    col < 8 &&
-    line > 1 &&
-    board[line - 1][col + 1]?.piece?.color === oppositeColor &&
-    !board[line - 2][col + 2].piece
-      ? [{ line: line - 2, col: col + 2 }]
-      : [];
-  const bottomLeftTake =
-    col > 1 &&
-    line < 8 &&
-    board[line + 1][col - 1]?.piece?.color === oppositeColor &&
-    !board[line + 2][col - 2].piece
-      ? [{ line: line + 2, col: col - 2 }]
-      : [];
-  const bottomRightTake =
-    col < 8 &&
-    line < 8 &&
-    board[line + 1][col + 1]?.piece?.color === oppositeColor &&
-    !board[line + 2][col + 2].piece
-      ? [{ line: line + 2, col: col + 2 }]
-      : [];
+  const take = (
+    lineDirection: "up" | "down",
+    colDirection: "left" | "right"
+  ) => {
+    const takeLine = lineDirection === "up" ? line - 1 : line + 1;
+    const takeCol = colDirection === "left" ? col - 1 : col + 1;
+    const nextLine = lineDirection === "up" ? line - 2 : line + 2;
+    const nextCol = colDirection === "left" ? col - 2 : col + 2;
+    if (
+      (colDirection === "left" && col < 2) ||
+      (colDirection === "right" && col > 7) ||
+      (lineDirection === "up" && line < 2) ||
+      (lineDirection === "down" && line > 7) ||
+      board[takeLine][takeCol]?.piece?.color !== oppositeColor ||
+      board[nextLine][nextCol].piece
+    )
+      return [];
+    return [{ line: nextLine, col: nextCol }];
+  };
 
   return [
     ...leftMove,
     ...rightMove,
-    ...topLeftTake,
-    ...topRightTake,
-    ...bottomLeftTake,
-    ...bottomRightTake,
+    ...take("down", "left"),
+    ...take("down", "right"),
+    ...take("up", "left"),
+    ...take("up", "right"),
   ];
 };
