@@ -62,11 +62,23 @@ const createBoard = () => {
       });
     });
 
+  const removePiece = (x, y) =>
+    update((board) => {
+      return board.map((line, lineIndex) =>
+        lineIndex === x
+          ? line.map((column, columnIndex) =>
+              columnIndex === y ? { ...column, piece: undefined } : column
+            )
+          : line
+      );
+    });
+
   return {
     subscribe,
     set,
     update,
     movePiece,
+    removePiece,
     reset,
   };
 };

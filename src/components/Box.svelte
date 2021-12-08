@@ -38,6 +38,7 @@
 
   const handlePieceClick: () => void = () => {
     if (box.piece?.color === currentPlayer) {
+      if (isSelected) possibilitiesStore.set(undefined);
       selectedPieceStore.set(isSelected ? undefined : { line, col });
       possibilitiesStore.set(getPossibilities(board, selectedPiece));
     }
@@ -49,6 +50,11 @@
       possibilities?.find((p) => p.line === line && p.col === col)
     ) {
       boardStore.movePiece(selectedPiece.line, selectedPiece.col, line, col);
+      if (Math.abs((line - selectedPiece.line) / 2) === 1)
+        boardStore.removePiece(
+          (selectedPiece.line + line) / 2,
+          (selectedPiece.col + col) / 2
+        );
       selectedPieceStore.set(undefined);
       currentPlayerStore.change();
       possibilitiesStore.set(undefined);
@@ -61,7 +67,6 @@
   $: isPossibility = !!possibilities?.find(
     (p) => p.line === line && p.col === col
   );
-  $: console.log(isPossibility);
 </script>
 
 <div
