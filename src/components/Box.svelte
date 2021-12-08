@@ -41,6 +41,7 @@
       console.log(selectedPiece.line, selectedPiece.col, line, col)
       boardStore.movePiece(selectedPiece.line, selectedPiece.col, line, col);
       selectedPieceStore.set(undefined);
+      currentPlayerStore.change();
     }
   };
 

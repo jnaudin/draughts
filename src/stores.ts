@@ -1,8 +1,21 @@
 import { Writable, writable } from "svelte/store";
 import { getSize } from "./helpers/utils";
 
-export const currentPlayerStore: Writable<"black" | "white"> =
-  writable("white");
+const createCurrentPlayer = () => {
+  const { subscribe, set, update }: Writable<"black" | "white"> =
+    writable("white");
+  const change = () =>
+    update((player) => (player === "black" ? "white" : "black"));
+
+  return {
+    subscribe,
+    set,
+    update,
+    change,
+  };
+};
+
+export const currentPlayerStore = createCurrentPlayer();
 
 export type CoordType = {
   line: number;
