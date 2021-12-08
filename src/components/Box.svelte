@@ -26,21 +26,47 @@
     selectedPiece = value;
   });
 
-  const handleClick: () => void = () => {
-    if (box.piece?.color === currentPlayer)
-      selectedPieceStore.set({ line, col });
+  let isSelected;
+  $: isSelected = line === selectedPiece?.line && col === selectedPiece?.col;
+
+  const handlePieceClick: () => void = () => {
+    if (box.piece?.color === currentPlayer) {
+      selectedPieceStore.set(isSelected ? undefined : { line, col });
+    }
   };
 
-  const box = board[line][col];
+  const handleBoxClick: () => void = () => {
+    console.log(!box.piece, box.background === "black", !!selectedPiece);
+    if (!box.piece && box.background === "black" && selectedPiece) {
+      console.log(selectedPiece.line, selectedPiece.col, line, col)
+      boardStore.movePiece(selectedPiece.line, selectedPiece.col, line, col);
+      selectedPieceStore.set(undefined);
+    }
+  };
+
+  let box;
+  $: box = board[line][col];
 </script>
 
-{#if box.piece}
-  <div class={`pawn pawn-${box.piece.color}`} on:click={() => handleClick()} />
-{/if}
+<div class={"box"} on:click={() => handleBoxClick()}>
+  {#if box.piece}
+    <div
+      class={`pawn pawn-${isSelected ? "selected" : box.piece.color}`}
+      on:click={() => handlePieceClick()}
+    />
+  {/if}
+</div>
 
 <style>
+  .box {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .pawn {
-    margin: auto;
     width: 3rem;
     min-width: 3rem;
     height: 3rem;
@@ -55,5 +81,9 @@
   .pawn-black {
     background-color: #391939;
     border: 1px solid grey;
+  }
+
+  .pawn-selected {
+    background-color: purple;
   }
 </style>

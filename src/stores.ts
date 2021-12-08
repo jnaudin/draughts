@@ -49,7 +49,7 @@ const createBoard = () => {
           );
         if (lineIndex === newX)
           return line.map((column, columnIndex) =>
-            columnIndex === y ? color : column
+            columnIndex === newY ? color : column
           );
         return line;
       });
