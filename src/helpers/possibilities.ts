@@ -13,22 +13,18 @@ export const getPossibilities = (
   const oppositeColor = pieceToMove.piece.color === "black" ? "white" : "black";
   const nextMoveLine = line + direction;
 
-  const leftMove =
-    !isAdditionalMove &&
-    nextMoveLine !== -1 &&
-    nextMoveLine !== 10 &&
-    col > 0 &&
-    !board[nextMoveLine][col - 1].piece
-      ? [{ line: nextMoveLine, col: col - 1 }]
-      : [];
-  const rightMove =
-    !isAdditionalMove &&
-    nextMoveLine !== -1 &&
-    nextMoveLine !== 10 &&
-    col < 9 &&
-    !board[nextMoveLine][col + 1].piece
-      ? [{ line: nextMoveLine, col: col + 1 }]
-      : [];
+  const move = (direction: "left" | "right") => {
+    const nextMoveCol = direction == "left" ? col - 1 : col + 1;
+
+    return isAdditionalMove ||
+      nextMoveLine < 0 ||
+      nextMoveLine > 9 ||
+      nextMoveCol < 0 ||
+      nextMoveCol > 9 ||
+      !board[nextMoveLine][nextMoveCol].piece
+      ? []
+      : [{ line: nextMoveLine, col: nextMoveCol }];
+  };
 
   const take = (
     lineDirection: "up" | "down",
@@ -51,8 +47,8 @@ export const getPossibilities = (
   };
 
   return [
-    ...leftMove,
-    ...rightMove,
+    ...move("left"),
+    ...move("right"),
     ...take("down", "left"),
     ...take("down", "right"),
     ...take("up", "left"),
