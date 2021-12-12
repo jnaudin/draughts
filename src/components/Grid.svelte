@@ -1,8 +1,9 @@
 <script lang="ts">
-  import { boardStore, BoardType } from "../stores";
+  import { boardStore } from "../stores";
+  import type { CellType } from "../types";
   import Box from "./Box.svelte";
 
-  let board: BoardType;
+  let board: CellType[][];
 
   boardStore.subscribe((value) => {
     board = value;

@@ -7,7 +7,8 @@
     selectedPieceStore,
     possibilitiesStore,
   } from "../stores";
-  import { CellType, CoordType } from "../types";
+
+  import type { CellType, CoordType } from "../types";
 
   export let line: number;
   export let col: number;
@@ -81,11 +82,13 @@
 </script>
 
 <div
+  data-testid={`box-${line}-${col}`}
   class={`box${isPossibility ? " possible" : ""}`}
   on:click={() => handleBoxClick()}
 >
   {#if box.piece}
     <div
+      data-testid={`pawn-${line}-${col}`}
       class={`pawn pawn-${isSelected ? "selected" : box.piece.color}`}
       on:click={() => handlePieceClick()}
     />
