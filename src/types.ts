@@ -3,7 +3,11 @@ export type CoordType = {
   col: number;
 };
 
+export type PieceTypeType = "pawn" | "lady";
+
+export type ColorType = "white" | "black";
+
 export type CellType = {
-  background: string;
-  piece?: { color: string; type: string };
+  background: ColorType;
+  piece?: { color: ColorType; type: PieceTypeType };
 };

@@ -65,3 +65,37 @@ it("moves piece", async () => {
     },
   });
 });
+
+it("sets lady", async () => {
+  expect(get(boardStore)[1][3]).toEqual({
+    background: "black",
+    piece: {
+      color: "black",
+      type: "pawn",
+    },
+  });
+  boardStore.setPieceType(1, 3);
+  expect(get(boardStore)[1][3]).toEqual({
+    background: "black",
+    piece: {
+      color: "black",
+      type: "lady",
+    },
+  });
+  boardStore.setPieceType(1, 3, "pawn");
+  expect(get(boardStore)[1][3]).toEqual({
+    background: "black",
+    piece: {
+      color: "black",
+      type: "pawn",
+    },
+  });
+  boardStore.setPieceType(1, 3, "lady");
+  expect(get(boardStore)[1][3]).toEqual({
+    background: "black",
+    piece: {
+      color: "black",
+      type: "lady",
+    },
+  });
+});
