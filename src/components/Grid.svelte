@@ -14,7 +14,7 @@
   {#each board as boxes, line}
     <tr>
       {#each boxes as box, col}
-        <td class={box.background}>
+        <td data-testid="box-container" class={box.background}>
           <Box {line} {col} />
         </td>
       {/each}
@@ -25,17 +25,6 @@
 <style>
   table {
     margin: auto;
-  }
-
-  .lightgray {
-    background-color: lightgrey;
-  }
-
-  .current-red.lightgray:hover {
-    background-color: lightsalmon;
-  }
-  .current-blue.lightgray:hover {
-    background-color: lightskyblue;
   }
 
   .white {
