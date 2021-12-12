@@ -17,7 +17,6 @@ it("changes correct current player", async () => {
   expect(get(currentPlayerStore)).toEqual("white");
 });
 
-//movePiece removePiece
 it("resets board", async () => {
   const initialBoard = get(boardStore);
   boardStore.removePiece(1, 3);

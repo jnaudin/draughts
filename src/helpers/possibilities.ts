@@ -9,6 +9,8 @@ export const getPossibilities = (
 
   const { line, col } = selectedPiece;
   const pieceToMove = board[line][col];
+  if (!pieceToMove.piece) return [];
+
   const direction = pieceToMove.piece.color === "black" ? 1 : -1;
   const oppositeColor = pieceToMove.piece.color === "black" ? "white" : "black";
   const nextMoveLine = line + direction;
@@ -21,7 +23,7 @@ export const getPossibilities = (
       nextMoveLine > 9 ||
       nextMoveCol < 0 ||
       nextMoveCol > 9 ||
-      !board[nextMoveLine][nextMoveCol].piece
+      !!board[nextMoveLine][nextMoveCol].piece
       ? []
       : [{ line: nextMoveLine, col: nextMoveCol }];
   };
