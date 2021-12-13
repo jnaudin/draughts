@@ -45,7 +45,7 @@
     if (!isAdditionalMove && box.piece?.color === currentPlayer) {
       if (isSelected) possibilitiesStore.set(undefined);
       selectedPieceStore.set(isSelected ? undefined : { line, col });
-      possibilitiesStore.set(getPossibilities(board, selectedPiece));
+      possibilitiesStore.set(getPossibilities(selectedPiece));
     }
   };
 
@@ -66,7 +66,7 @@
           (selectedPiece.line + line) / 2,
           (selectedPiece.col + col) / 2
         );
-        const newPossibilities = getPossibilities(board, { line, col }, true);
+        const newPossibilities = getPossibilities({ line, col }, true);
         if (newPossibilities.length) {
           isAdditionalMove = true;
           selectedPieceStore.set({ line, col });

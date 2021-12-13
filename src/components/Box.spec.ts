@@ -13,8 +13,6 @@ beforeEach(() => {
   currentPlayerStore.set("white");
 });
 
-afterEach(cleanup);
-
 it("selects pawn", async () => {
   const { getByTestId } = render(Box, { line: 7, col: 1 });
 

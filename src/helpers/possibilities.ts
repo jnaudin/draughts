@@ -1,32 +1,59 @@
-import type { CellType, CoordType } from "../types";
+import { get } from "svelte/store";
+import { boardStore, selectedPieceStore } from "../stores";
+import type { CoordType } from "../types";
 import { invertColor } from "./utils";
 
+const BACKWARD = true;
+
 export const getPossibilities = (
-  board: CellType[][],
   selectedPiece: CoordType,
   isAdditionalMove: boolean = false
 ): CoordType[] => {
   if (!selectedPiece) return [];
 
+  const board = get(boardStore);
+
   const { line, col } = selectedPiece;
   const pieceToMove = board[line][col];
   if (!pieceToMove.piece) return [];
 
-  const direction = pieceToMove.piece.color === "black" ? 1 : -1;
+  const orientation = pieceToMove.piece.color === "black" ? 1 : -1;
   const oppositeColor = invertColor(pieceToMove.piece.color);
-  const nextMoveLine = line + direction;
+  const isLady = pieceToMove.piece.type === "lady";
 
-  const move = (direction: "left" | "right") => {
-    const nextMoveCol = direction == "left" ? col - 1 : col + 1;
+  const move = (
+    direction: "left" | "right",
+    backward: boolean = false,
+    moves: CoordType[] = [],
+    currentLine: number = line,
+    currentCol: number = col,
+    firstCall: boolean = true
+  ) => {
+    const nextMoveLine = backward
+      ? currentLine - orientation
+      : currentLine + orientation;
+    const nextMoveCol = direction === "left" ? currentCol - 1 : currentCol + 1;
 
-    return isAdditionalMove ||
+    if (
+      isAdditionalMove ||
+      (backward && !isLady) ||
+      (!firstCall && !isLady) ||
       nextMoveLine < 0 ||
       nextMoveLine > 9 ||
       nextMoveCol < 0 ||
       nextMoveCol > 9 ||
       !!board[nextMoveLine][nextMoveCol].piece
-      ? []
-      : [{ line: nextMoveLine, col: nextMoveCol }];
+    )
+      return moves;
+
+    return move(
+      direction,
+      backward,
+      [...moves, { line: nextMoveLine, col: nextMoveCol }],
+      nextMoveLine,
+      nextMoveCol,
+      false
+    );
   };
 
   const take = (
@@ -50,6 +77,8 @@ export const getPossibilities = (
   return [
     ...move("left"),
     ...move("right"),
+    ...move("left", BACKWARD),
+    ...move("right", BACKWARD),
     ...take("down", "left"),
     ...take("down", "right"),
     ...take("up", "left"),
