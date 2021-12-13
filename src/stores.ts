@@ -1,10 +1,9 @@
-import { Writable, writable } from "svelte/store";
+import { get, Writable, writable } from "svelte/store";
 import { getSize } from "./helpers/utils";
 import type { CellType, ColorType, CoordType, PieceTypeType } from "./types";
 
 const createCurrentPlayer = () => {
-  const { subscribe, set, update }: Writable<ColorType> =
-    writable("white");
+  const { subscribe, set, update }: Writable<ColorType> = writable("white");
   const change = () =>
     update((player) => (player === "black" ? "white" : "black"));
 
@@ -46,6 +45,7 @@ const createBoard = () => {
   const { subscribe, set, update } = writable(getInitialBoard());
   const reset = () => set(getInitialBoard());
   const movePiece = (x: number, y: number, newX: number, newY: number) =>
+    //todo use updateBox
     update((board) => {
       const color = board[x][y];
 
@@ -63,28 +63,38 @@ const createBoard = () => {
     });
 
   const removePiece = (x: number, y: number) =>
-    update((board) => {
-      return board.map((line, lineIndex) =>
+    //todo use updateBox
+    update((board) =>
+      board.map((line, lineIndex) =>
         lineIndex === x
           ? line.map((column, columnIndex) =>
               columnIndex === y ? { ...column, piece: undefined } : column
             )
           : line
-      );
-    });
+      )
+    );
 
-  const setPieceType = (x: number, y: number, type: PieceTypeType = "lady") =>
-    update((board) => {
-      return board.map((line, lineIndex) =>
-        lineIndex === x
-          ? line.map((column, columnIndex) =>
-              columnIndex === y
-                ? { ...column, piece: { ...column.piece, type } }
-                : column
+  const setPieceType = (x: number, y: number, type: PieceTypeType = "lady") => {
+    const previousPiece = get(boardStore)[x][y].piece;
+    updateBox(x, y, { ...previousPiece, type });
+  };
+
+  const updateBox = (
+    lineToUpdate: number,
+    colToUpdate: number,
+    piece: CellType["piece"]
+  ) =>
+    update((board) =>
+      board.map((line, lineIndex) =>
+        lineIndex === lineToUpdate
+          ? line.map((col, colIndex) =>
+              colIndex === colToUpdate && col.background === "black"
+                ? { ...col, piece }
+                : col
             )
           : line
-      );
-    });
+      )
+    );
 
   return {
     subscribe,
@@ -94,6 +104,7 @@ const createBoard = () => {
     removePiece,
     reset,
     setPieceType,
+    updateBox,
   };
 };
 

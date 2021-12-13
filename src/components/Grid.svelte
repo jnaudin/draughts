@@ -25,6 +25,8 @@
 <style>
   table {
     margin: auto;
+    border: solid black 30px;
+    border-radius: 10px;
   }
 
   .white {

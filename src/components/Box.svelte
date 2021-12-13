@@ -55,6 +55,12 @@
       possibilities?.find((p) => p.line === line && p.col === col)
     ) {
       boardStore.movePiece(selectedPiece.line, selectedPiece.col, line, col);
+      if (
+        (line === 0 && currentPlayer === "white") ||
+        (line === 9 && currentPlayer === "black")
+      )
+        boardStore.setPieceType(line, col, "lady");
+
       if (Math.abs((line - selectedPiece.line) / 2) === 1) {
         boardStore.removePiece(
           (selectedPiece.line + line) / 2,
@@ -88,8 +94,10 @@
 >
   {#if box.piece}
     <div
-      data-testid={`pawn-${line}-${col}`}
-      class={`pawn pawn-${isSelected ? "selected" : box.piece.color}`}
+      data-testid={`piece-${line}-${col}`}
+      class={`${box.piece.type} piece-${
+        isSelected ? "selected" : box.piece.color
+      }`}
       on:click={() => handlePieceClick()}
     />
   {/if}
@@ -109,19 +117,28 @@
     min-width: 2.5rem;
     height: 2.5rem;
     min-height: 2.5rem;
-    border-radius: 1.25rem;
+    border-radius: 1.5rem;
+    border: 3px solid grey;
+  }
+
+  .lady {
+    width: 3.5rem;
+    min-width: 3.5rem;
+    height: 3.5rem;
+    min-height: 3.5rem;
+    border-radius: 2rem;
     border: 1px solid grey;
   }
 
-  .pawn-white {
+  .piece-white {
     background-color: navajowhite;
   }
 
-  .pawn-black {
+  .piece-black {
     background-color: brown;
   }
 
-  .pawn-selected {
+  .piece-selected {
     background-color: purple;
   }
   .possible {

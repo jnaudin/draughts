@@ -36,18 +36,16 @@ export const getPossibilities = (
     const takeCol = colDirection === "left" ? col - 1 : col + 1;
     const nextLine = lineDirection === "up" ? line - 2 : line + 2;
     const nextCol = colDirection === "left" ? col - 2 : col + 2;
-    if (
-      (colDirection === "left" && col < 2) ||
-      (colDirection === "right" && col > 7) ||
-      (lineDirection === "up" && line < 2) ||
-      (lineDirection === "down" && line > 7) ||
+
+    return nextCol < 0 ||
+      nextCol > 9 ||
+      nextLine < 0 ||
+      nextLine > 9 ||
       board[takeLine][takeCol]?.piece?.color !== oppositeColor ||
       board[nextLine][nextCol].piece
-    )
-      return [];
-    return [{ line: nextLine, col: nextCol }];
+      ? []
+      : [{ line: nextLine, col: nextCol }];
   };
-
   return [
     ...move("left"),
     ...move("right"),
