@@ -1,4 +1,5 @@
 import type { CellType, CoordType } from "../types";
+import { invertColor } from "./utils";
 
 export const getPossibilities = (
   board: CellType[][],
@@ -12,7 +13,7 @@ export const getPossibilities = (
   if (!pieceToMove.piece) return [];
 
   const direction = pieceToMove.piece.color === "black" ? 1 : -1;
-  const oppositeColor = pieceToMove.piece.color === "black" ? "white" : "black";
+  const oppositeColor = invertColor(pieceToMove.piece.color);
   const nextMoveLine = line + direction;
 
   const move = (direction: "left" | "right") => {
