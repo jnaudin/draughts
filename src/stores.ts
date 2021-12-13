@@ -1,6 +1,6 @@
 import { get, Writable, writable } from "svelte/store";
 import { getSize, invertColor } from "./helpers/utils";
-import type { CellType, ColorType, CoordType, PieceTypeType } from "./types";
+import type { CellType, ColorType, CoordType } from "./types";
 
 const createCurrentPlayer = () => {
   const { subscribe, set, update }: Writable<ColorType> = writable("white");
@@ -53,7 +53,11 @@ const createBoard = () => {
 
   const removePiece = (x: number, y: number) => updateBox(x, y, undefined);
 
-  const setPieceType = (x: number, y: number, type: PieceTypeType = "lady") => {
+  const setPieceType = (
+    x: number,
+    y: number,
+    type: CellType["piece"]["type"] = "lady"
+  ) => {
     const previousPiece = get(boardStore)[x][y].piece;
     updateBox(x, y, { ...previousPiece, type });
   };
