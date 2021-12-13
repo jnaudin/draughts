@@ -43,36 +43,16 @@ const getInitialBoard: () => CellType[][] = () =>
 
 const createBoard = () => {
   const { subscribe, set, update } = writable(getInitialBoard());
+
   const reset = () => set(getInitialBoard());
-  const movePiece = (x: number, y: number, newX: number, newY: number) =>
-    //todo use updateBox
-    update((board) => {
-      const color = board[x][y];
 
-      return board.map((line, lineIndex) => {
-        if (lineIndex === x)
-          return line.map((column, columnIndex) =>
-            columnIndex === y ? { ...column, piece: undefined } : column
-          );
-        if (lineIndex === newX)
-          return line.map((column, columnIndex) =>
-            columnIndex === newY ? color : column
-          );
-        return line;
-      });
-    });
+  const movePiece = (x: number, y: number, newX: number, newY: number) => {
+    const previousPiece = get(boardStore)[x][y].piece;
+    updateBox(x, y, undefined);
+    updateBox(newX, newY, previousPiece);
+  };
 
-  const removePiece = (x: number, y: number) =>
-    //todo use updateBox
-    update((board) =>
-      board.map((line, lineIndex) =>
-        lineIndex === x
-          ? line.map((column, columnIndex) =>
-              columnIndex === y ? { ...column, piece: undefined } : column
-            )
-          : line
-      )
-    );
+  const removePiece = (x: number, y: number) => updateBox(x, y, undefined);
 
   const setPieceType = (x: number, y: number, type: PieceTypeType = "lady") => {
     const previousPiece = get(boardStore)[x][y].piece;
