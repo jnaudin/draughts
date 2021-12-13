@@ -8,7 +8,7 @@
     possibilitiesStore,
   } from "../stores";
 
-  import type { CellType, CoordType } from "../types";
+  import type { CellType, CoordType, PossibilityType } from "../types";
 
   export let line: number;
   export let col: number;
@@ -16,7 +16,7 @@
   let currentPlayer: "black" | "white";
   let board: CellType[][];
   let selectedPiece: CoordType;
-  let possibilities: CoordType[];
+  let possibilities: PossibilityType[];
   let isAdditionalMove: boolean = false;
 
   currentPlayerStore.subscribe((value) => {
@@ -50,9 +50,10 @@
   };
 
   const handleBoxClick: () => void = () => {
+    const possibility = possibilities?.find((p) => p.coord.line === line && p.coord.col === col)
     if (
       selectedPiece &&
-      possibilities?.find((p) => p.line === line && p.col === col)
+      possibility
     ) {
       boardStore.movePiece(selectedPiece.line, selectedPiece.col, line, col);
       if (
@@ -61,10 +62,10 @@
       )
         boardStore.setPieceType(line, col, "lady");
 
-      if (Math.abs((line - selectedPiece.line) / 2) === 1) {
+      if (possibility.type==="take") {
         boardStore.removePiece(
-          (selectedPiece.line + line) / 2,
-          (selectedPiece.col + col) / 2
+          possibility.takeCoord.line,
+          possibility.takeCoord.col
         );
         const newPossibilities = getPossibilities({ line, col }, true);
         if (newPossibilities.length) {
@@ -83,7 +84,7 @@
 
   let isPossibility;
   $: isPossibility = !!possibilities?.find(
-    (p) => p.line === line && p.col === col
+    (p) => p.coord.line === line && p.coord.col === col
   );
 </script>
 

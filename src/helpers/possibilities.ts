@@ -1,6 +1,6 @@
 import { get } from "svelte/store";
 import { boardStore, selectedPieceStore } from "../stores";
-import type { CoordType } from "../types";
+import type { CoordType, PossibilityType } from "../types";
 import { invertColor } from "./utils";
 
 const BACKWARD = true;
@@ -8,7 +8,7 @@ const BACKWARD = true;
 export const getPossibilities = (
   selectedPiece: CoordType,
   isAdditionalMove: boolean = false
-): CoordType[] => {
+): PossibilityType[] => {
   if (!selectedPiece) return [];
 
   const board = get(boardStore);
@@ -24,11 +24,11 @@ export const getPossibilities = (
   const move = (
     direction: "left" | "right",
     backward: boolean = false,
-    moves: CoordType[] = [],
+    moves: PossibilityType[] = [],
     currentLine: number = line,
     currentCol: number = col,
     firstCall: boolean = true
-  ) => {
+  ): PossibilityType[] => {
     const nextMoveLine = backward
       ? currentLine - orientation
       : currentLine + orientation;
@@ -49,7 +49,10 @@ export const getPossibilities = (
     return move(
       direction,
       backward,
-      [...moves, { line: nextMoveLine, col: nextMoveCol }],
+      [
+        ...moves,
+        { coord: { line: nextMoveLine, col: nextMoveCol }, type: "move" },
+      ],
       nextMoveLine,
       nextMoveCol,
       false
@@ -58,22 +61,40 @@ export const getPossibilities = (
 
   const take = (
     lineDirection: "up" | "down",
-    colDirection: "left" | "right"
-  ) => {
-    const takeLine = lineDirection === "up" ? line - 1 : line + 1;
-    const takeCol = colDirection === "left" ? col - 1 : col + 1;
-    const nextLine = lineDirection === "up" ? line - 2 : line + 2;
-    const nextCol = colDirection === "left" ? col - 2 : col + 2;
+    colDirection: "left" | "right",
+    currentLine: number = line,
+    currentCol: number = col,
+    firstCall: boolean = true
+  ): PossibilityType[] => {
+    const takeLine = lineDirection === "up" ? currentLine - 1 : currentLine + 1;
+    const takeCol = colDirection === "left" ? currentCol - 1 : currentCol + 1;
+    const nextLine = lineDirection === "up" ? currentLine - 2 : currentLine + 2;
+    const nextCol = colDirection === "left" ? currentCol - 2 : currentCol + 2;
 
-    return nextCol < 0 ||
+    if (
+      (!firstCall && !isLady) ||
+      nextCol < 0 ||
       nextCol > 9 ||
       nextLine < 0 ||
-      nextLine > 9 ||
-      board[takeLine][takeCol]?.piece?.color !== oppositeColor ||
-      board[nextLine][nextCol].piece
-      ? []
-      : [{ line: nextLine, col: nextCol }];
+      nextLine > 9
+    )
+      return [];
+
+    if (
+      board[takeLine][takeCol]?.piece?.color === oppositeColor &&
+      !board[nextLine][nextCol].piece
+    )
+      return [
+        {
+          coord: { line: nextLine, col: nextCol },
+          type: "take",
+          takeCoord: { line: takeLine, col: takeCol },
+        },
+      ];
+
+    return take(lineDirection, colDirection, takeLine, takeCol, false);
   };
+
   return [
     ...move("left"),
     ...move("right"),

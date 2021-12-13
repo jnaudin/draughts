@@ -12,28 +12,43 @@ it("returns moves when possible", async () => {
   expect(getPossibilities({ line: 0, col: 0 })).toEqual([]);
   expect(getPossibilities({ line: 2, col: 0 })).toEqual([
     {
-      line: 3,
-      col: 1,
+      coord: {
+        line: 3,
+        col: 1,
+      },
+      type: "move",
     },
   ]);
   expect(getPossibilities({ line: 2, col: 8 })).toEqual([
     {
-      line: 3,
-      col: 7,
+      coord: {
+        line: 3,
+        col: 7,
+      },
+      type: "move",
     },
     {
-      line: 3,
-      col: 9,
+      coord: {
+        line: 3,
+        col: 9,
+      },
+      type: "move",
     },
   ]);
   expect(getPossibilities({ line: 7, col: 7 })).toEqual([
     {
-      line: 6,
-      col: 6,
+      coord: {
+        line: 6,
+        col: 6,
+      },
+      type: "move",
     },
     {
-      line: 6,
-      col: 8,
+      coord: {
+        line: 6,
+        col: 8,
+      },
+      type: "move",
     },
   ]);
 });
@@ -42,15 +57,25 @@ it("handles takes when possible", async () => {
   boardStore.movePiece(2, 0, 6, 0);
   expect(getPossibilities({ line: 7, col: 1 })).toEqual([
     {
-      line: 6,
-      col: 2,
+      coord: {
+        line: 6,
+        col: 2,
+      },
+      type: "move",
     },
   ]);
   boardStore.movePiece(2, 2, 6, 2);
   expect(getPossibilities({ line: 7, col: 1 })).toEqual([
     {
-      line: 5,
-      col: 3,
+      coord: {
+        line: 5,
+        col: 3,
+      },
+      type: "take",
+      takeCoord: {
+        line: 6,
+        col: 2,
+      },
     },
   ]);
   expect(getPossibilities({ line: 6, col: 2 })).toEqual([]);
@@ -59,12 +84,22 @@ it("handles takes when possible", async () => {
   boardStore.movePiece(7, 1, 4, 2);
   expect(getPossibilities({ line: 5, col: 3 })).toEqual([
     {
-      col: 4,
-      line: 6,
+      coord: {
+        line: 6,
+        col: 4,
+      },
+      type: "move",
     },
     {
-      col: 1,
-      line: 3,
+      coord: {
+        line: 3,
+        col: 1,
+      },
+      type: "take",
+      takeCoord: {
+        line: 4,
+        col: 2,
+      },
     },
   ]);
 });
@@ -74,48 +109,89 @@ it("calculates moves for the lady (forward)", async () => {
   boardStore.updateBox(5, 3, { color: "black", type: "lady" });
   expect(getPossibilities({ line: 7, col: 5 })).toEqual([
     {
-      col: 4,
-      line: 6,
+      coord: {
+        col: 4,
+        line: 6,
+      },
+      type: "move",
     },
     {
-      col: 6,
-      line: 6,
+      coord: {
+        col: 6,
+        line: 6,
+      },
+      type: "move",
     },
     {
-      col: 7,
-      line: 5,
+      coord: {
+        col: 7,
+        line: 5,
+      },
+      type: "move",
     },
     {
-      col: 8,
-      line: 4,
+      coord: {
+        col: 8,
+        line: 4,
+      },
+      type: "move",
     },
     {
-      col: 9,
-      line: 3,
+      coord: {
+        col: 9,
+        line: 3,
+      },
+      type: "move",
+    },
+    {
+      coord: {
+        col: 2,
+        line: 4,
+      },
+      type: "take",
+      takeCoord: {
+        line: 5,
+        col: 3,
+      },
     },
   ]);
 
   boardStore.updateBox(5, 3, { color: "white", type: "lady" });
   expect(getPossibilities({ line: 7, col: 5 })).toEqual([
     {
-      col: 4,
-      line: 6,
+      coord: {
+        col: 4,
+        line: 6,
+      },
+      type: "move",
     },
     {
-      col: 6,
-      line: 6,
+      coord: {
+        col: 6,
+        line: 6,
+      },
+      type: "move",
     },
     {
-      col: 7,
-      line: 5,
+      coord: {
+        col: 7,
+        line: 5,
+      },
+      type: "move",
     },
     {
-      col: 8,
-      line: 4,
+      coord: {
+        col: 8,
+        line: 4,
+      },
+      type: "move",
     },
     {
-      col: 9,
-      line: 3,
+      coord: {
+        col: 9,
+        line: 3,
+      },
+      type: "move",
     },
   ]);
 });
@@ -124,28 +200,46 @@ it("calculates moves for the lady (backward)", async () => {
   boardStore.updateBox(4, 4, { color: "white", type: "lady" });
   expect(getPossibilities({ line: 4, col: 4 })).toEqual([
     {
-      col: 3,
-      line: 3,
+      coord: {
+        col: 3,
+        line: 3,
+      },
+      type: "move",
     },
     {
-      col: 5,
-      line: 3,
+      coord: {
+        col: 5,
+        line: 3,
+      },
+      type: "move",
     },
     {
-      col: 3,
-      line: 5,
+      coord: {
+        col: 3,
+        line: 5,
+      },
+      type: "move",
     },
     {
-      col: 2,
-      line: 6,
+      coord: {
+        col: 2,
+        line: 6,
+      },
+      type: "move",
     },
     {
-      col: 5,
-      line: 5,
+      coord: {
+        col: 5,
+        line: 5,
+      },
+      type: "move",
     },
     {
-      col: 6,
-      line: 6,
+      coord: {
+        col: 6,
+        line: 6,
+      },
+      type: "move",
     },
   ]);
 });

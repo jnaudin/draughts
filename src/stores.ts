@@ -1,6 +1,6 @@
 import { get, Writable, writable } from "svelte/store";
 import { getSize, invertColor } from "./helpers/utils";
-import type { CellType, ColorType, CoordType } from "./types";
+import type { CellType, ColorType, CoordType, PossibilityType } from "./types";
 
 const createCurrentPlayer = () => {
   const { subscribe, set, update }: Writable<ColorType> = writable("white");
@@ -19,8 +19,8 @@ export const currentPlayerStore = createCurrentPlayer();
 export const selectedPieceStore: Writable<CoordType | undefined> =
   writable(undefined);
 
-export const possibilitiesStore: Writable<CoordType[] | undefined> =
-  writable(undefined);
+export const possibilitiesStore: Writable<PossibilityType[]> =
+  writable([]);
 
 const getInitialBoard: () => CellType[][] = () =>
   new Array(getSize(false)).fill(0).map((_val, lineIndex) =>

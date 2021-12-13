@@ -22,8 +22,8 @@ it("selects pawn", async () => {
 
   expect(pawn).toHaveClass("piece-selected");
   expect(get(possibilitiesStore)).toEqual([
-    { line: 6, col: 0 },
-    { line: 6, col: 2 },
+    { coord: { line: 6, col: 0 }, type: "move" },
+    { coord: { line: 6, col: 2 }, type: "move" },
   ]);
 });
 
@@ -50,7 +50,7 @@ it("tries to select opponent's pawn", async () => {
 });
 
 it("displays next move", async () => {
-  possibilitiesStore.set([{ line: 5, col: 5 }]);
+  possibilitiesStore.set([{ coord: { line: 5, col: 5 }, type: "move" }]);
 
   const { getByTestId } = render(Box, { line: 5, col: 5 });
   const box = getByTestId("box-5-5");
@@ -59,7 +59,7 @@ it("displays next move", async () => {
 });
 
 it("hides next move", async () => {
-  possibilitiesStore.set([{ line: 5, col: 1 }]);
+  possibilitiesStore.set([{ coord: { line: 5, col: 1 }, type: "move" }]);
 
   const { getByTestId } = render(Box, { line: 5, col: 3 });
   const box = getByTestId("box-5-3");
@@ -78,10 +78,10 @@ it("selects box", async () => {
   expect(fromPawn).toHaveClass("piece-selected");
   expect(get(possibilitiesStore)).toHaveLength(2);
   expect(
-    get(possibilitiesStore).find((p) => p.line === 6 && p.col === 2)
+    get(possibilitiesStore).find((p) => p.coord.line === 6 && p.coord.col === 2)
   ).toBeDefined();
   expect(
-    get(possibilitiesStore).find((p) => p.line === 6 && p.col === 0)
+    get(possibilitiesStore).find((p) => p.coord.line === 6 && p.coord.col === 0)
   ).toBeDefined();
 
   expect(toBox.queryByTestId("piece-6-2")).not.toBeInTheDocument();
@@ -89,6 +89,30 @@ it("selects box", async () => {
   await fireEvent.click(toContainer);
   expect(toBox.queryByTestId("piece-6-2")).toBeInTheDocument();
   expect(fromBox.queryByTestId("piece-7-1")).not.toBeInTheDocument();
+
+  expect(get(currentPlayerStore)).toEqual("black");
+});
+
+it("selects box with lady", async () => {
+  boardStore.updateBox(7, 5, { color: "white", type: "lady" });
+  boardStore.updateBox(5, 7, { color: "black", type: "pawn" });
+
+  render(Box, { line: 7, col: 5 });
+  render(Box, { line: 4, col: 8 });
+  const container = render(Box, { line: 5, col: 7 });
+
+  const fromPawn = container.getByTestId("piece-7-5");
+  await fireEvent.click(fromPawn);
+  expect(fromPawn).toHaveClass("piece-selected");
+  expect(get(possibilitiesStore)).toHaveLength(6);
+
+  const toContainer = container.getByTestId("box-4-8");
+  await fireEvent.click(toContainer);
+  expect(container.queryByTestId("piece-7-5")).not.toBeInTheDocument();
+  expect(container.queryByTestId("piece-5-7")).not.toBeInTheDocument();
+  const newLadyPiece = container.queryByTestId("piece-4-8");
+  expect(newLadyPiece).toBeInTheDocument();
+  expect(newLadyPiece).toHaveClass("lady");
 
   expect(get(currentPlayerStore)).toEqual("black");
 });
@@ -107,10 +131,10 @@ it("selects box with a remaining piece to take", async () => {
   expect(fromPawn).toHaveClass("piece-selected");
   expect(get(possibilitiesStore)).toHaveLength(2);
   expect(
-    get(possibilitiesStore).find((p) => p.line === 6 && p.col === 2)
+    get(possibilitiesStore).find((p) => p.coord.line === 6 && p.coord.col === 2)
   ).toBeDefined();
   expect(
-    get(possibilitiesStore).find((p) => p.line === 5 && p.col === 5)
+    get(possibilitiesStore).find((p) => p.coord.line === 5 && p.coord.col === 5)
   ).toBeDefined();
 
   expect(toBox.queryByTestId("piece-5-5")).not.toBeInTheDocument();
@@ -122,7 +146,7 @@ it("selects box with a remaining piece to take", async () => {
 
   expect(get(possibilitiesStore)).toHaveLength(1);
   expect(
-    get(possibilitiesStore).find((p) => p.line === 3 && p.col === 3)
+    get(possibilitiesStore).find((p) => p.coord.line === 3 && p.coord.col === 3)
   ).toBeDefined();
   const lastContainer = toBox.getByTestId("box-3-3");
   await fireEvent.click(lastContainer);

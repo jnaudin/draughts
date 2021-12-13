@@ -3,6 +3,12 @@ export type CoordType = {
   col: number;
 };
 
+export type PossibilityType = {
+  coord: CoordType;
+  type: "take" | "move";
+  takeCoord?: CoordType;
+};
+
 export type ColorType = "white" | "black";
 
 export type CellType = {
