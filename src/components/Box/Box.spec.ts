@@ -4,7 +4,7 @@
 
 import Box from "./Box.svelte";
 import { render, fireEvent } from "@testing-library/svelte";
-import { boardStore, currentPlayerStore, possibilitiesStore } from "../stores";
+import { boardStore, currentPlayerStore, possibilitiesStore } from "../../stores/stores";
 import { get } from "svelte/store";
 
 beforeEach(() => {

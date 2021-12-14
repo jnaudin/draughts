@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { boardStore } from "../stores";
-  import type { CellType } from "../types";
-  import Box from "./Box.svelte";
+  import { boardStore } from "../../stores/stores";
+  import type { CellType } from "../../types";
+  import Box from "../Box/Box.svelte";
 
   let board: CellType[][];
 

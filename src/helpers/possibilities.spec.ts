@@ -3,7 +3,7 @@
  */
 
 import { get } from "svelte/store";
-import { boardStore } from "../stores";
+import { boardStore } from "../stores/stores";
 import { getPossibilities } from "./possibilities";
 
 beforeEach(() => boardStore.reset());

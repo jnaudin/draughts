@@ -1,5 +1,5 @@
 import { get } from "svelte/store";
-import { boardStore, selectedPieceStore } from "../stores";
+import { boardStore, selectedPieceStore } from "../stores/stores";
 import type { CoordType, PossibilityType } from "../types";
 import { invertColor } from "./utils";
 

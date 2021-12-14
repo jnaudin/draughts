@@ -4,7 +4,7 @@
 
 import Grid from "./Grid.svelte";
 import { render } from "@testing-library/svelte";
-import { boardStore } from "../stores";
+import { boardStore } from "../../stores/stores";
 
 beforeEach(() => {
   boardStore.reset();

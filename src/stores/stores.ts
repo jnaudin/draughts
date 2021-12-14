@@ -1,6 +1,6 @@
 import { get, Writable, writable } from "svelte/store";
-import { getSize, invertColor } from "./helpers/utils";
-import type { CellType, ColorType, CoordType, PossibilityType } from "./types";
+import { getSize, invertColor } from "../helpers/utils";
+import type { CellType, ColorType, CoordType, PossibilityType } from "../types";
 
 const createCurrentPlayer = () => {
   const { subscribe, set, update }: Writable<ColorType> = writable("white");
