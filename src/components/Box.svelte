@@ -6,6 +6,7 @@
     boardStore,
     selectedPieceStore,
     possibilitiesStore,
+    isAdditionalMoveStore,
   } from "../stores";
 
   import type { CellType, CoordType, PossibilityType } from "../types";
@@ -17,7 +18,7 @@
   let board: CellType[][];
   let selectedPiece: CoordType;
   let possibilities: PossibilityType[];
-  let isAdditionalMove: boolean = false;
+  let isAdditionalMove: boolean;
 
   currentPlayerStore.subscribe((value) => {
     currentPlayer = value;
@@ -35,6 +36,10 @@
     possibilities = value;
   });
 
+  isAdditionalMoveStore.subscribe((value) => {
+    isAdditionalMove = value;
+  });
+
   let isSelected;
   $: isSelected = line === selectedPiece?.line && col === selectedPiece?.col;
 
@@ -50,11 +55,11 @@
   };
 
   const handleBoxClick: () => void = () => {
-    const possibility = possibilities?.find((p) => p.coord.line === line && p.coord.col === col)
-    if (
-      selectedPiece &&
-      possibility
-    ) {
+    const possibility = possibilities?.find(
+      (p) => p.coord.line === line && p.coord.col === col
+    );
+    if (selectedPiece && possibility) {
+      isAdditionalMoveStore.set(false);
       boardStore.movePiece(selectedPiece.line, selectedPiece.col, line, col);
       if (
         (line === 0 && currentPlayer === "white") ||
@@ -62,14 +67,14 @@
       )
         boardStore.setPieceType(line, col, "lady");
 
-      if (possibility.type==="take") {
+      if (possibility.type === "take") {
         boardStore.removePiece(
           possibility.takeCoord.line,
           possibility.takeCoord.col
         );
         const newPossibilities = getPossibilities({ line, col }, true);
         if (newPossibilities.length) {
-          isAdditionalMove = true;
+          isAdditionalMoveStore.set(true);
           selectedPieceStore.set({ line, col });
           possibilitiesStore.set(newPossibilities);
         }

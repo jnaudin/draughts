@@ -19,8 +19,9 @@ export const currentPlayerStore = createCurrentPlayer();
 export const selectedPieceStore: Writable<CoordType | undefined> =
   writable(undefined);
 
-export const possibilitiesStore: Writable<PossibilityType[]> =
-  writable([]);
+export const possibilitiesStore: Writable<PossibilityType[]> = writable([]);
+
+export const isAdditionalMoveStore: Writable<boolean> = writable(false);
 
 const getInitialBoard: () => CellType[][] = () =>
   new Array(getSize(false)).fill(0).map((_val, lineIndex) =>

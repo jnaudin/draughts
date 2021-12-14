@@ -3,7 +3,7 @@
  */
 
 import Box from "./Box.svelte";
-import { render, fireEvent, cleanup } from "@testing-library/svelte";
+import { render, fireEvent } from "@testing-library/svelte";
 import { boardStore, currentPlayerStore, possibilitiesStore } from "../stores";
 import { get } from "svelte/store";
 
@@ -121,11 +121,12 @@ it("selects box with a remaining piece to take", async () => {
   boardStore.movePiece(2, 0, 6, 4);
   boardStore.movePiece(2, 2, 4, 4);
 
-  const fromBox = render(Box, { line: 7, col: 3 });
-  const toBox = render(Box, { line: 5, col: 5 });
-  const lastBox = render(Box, { line: 3, col: 3 });
+  render(Box, { line: 7, col: 9 });
+  render(Box, { line: 7, col: 3 });
+  render(Box, { line: 5, col: 5 });
+  const container = render(Box, { line: 3, col: 3 });
 
-  const fromPawn = fromBox.getByTestId("piece-7-3");
+  const fromPawn = container.getByTestId("piece-7-3");
   expect(fromPawn).toHaveClass("piece-white");
   await fireEvent.click(fromPawn);
   expect(fromPawn).toHaveClass("piece-selected");
@@ -137,21 +138,30 @@ it("selects box with a remaining piece to take", async () => {
     get(possibilitiesStore).find((p) => p.coord.line === 5 && p.coord.col === 5)
   ).toBeDefined();
 
-  expect(toBox.queryByTestId("piece-5-5")).not.toBeInTheDocument();
-  const toContainer = toBox.getByTestId("box-5-5");
+  expect(container.queryByTestId("piece-5-5")).not.toBeInTheDocument();
+  const toContainer = container.getByTestId("box-5-5");
   await fireEvent.click(toContainer);
-  expect(toBox.queryByTestId("piece-5-5")).toBeInTheDocument();
-  expect(fromBox.queryByTestId("piece-7-3")).not.toBeInTheDocument();
+  const movedPiece = container.queryByTestId("piece-5-5");
+  expect(movedPiece).toBeInTheDocument();
+  expect(container.queryByTestId("piece-7-3")).not.toBeInTheDocument();
   expect(get(currentPlayerStore)).not.toEqual("black");
 
   expect(get(possibilitiesStore)).toHaveLength(1);
   expect(
     get(possibilitiesStore).find((p) => p.coord.line === 3 && p.coord.col === 3)
   ).toBeDefined();
-  const lastContainer = toBox.getByTestId("box-3-3");
+
+  //can not select an other piece when it is an additional take
+  const randomPiece = container.getByTestId("piece-7-9");
+  expect(randomPiece).not.toHaveClass("piece-selected");
+  await fireEvent.click(randomPiece);
+  expect(randomPiece).not.toHaveClass("piece-selected");
+  expect(movedPiece).toHaveClass("piece-selected");
+
+  const lastContainer = container.getByTestId("box-3-3");
   await fireEvent.click(lastContainer);
-  expect(lastBox.queryByTestId("piece-3-3")).toBeInTheDocument();
-  expect(toBox.queryByTestId("piece-5-5")).not.toBeInTheDocument();
+  expect(container.queryByTestId("piece-3-3")).toBeInTheDocument();
+  expect(movedPiece).not.toBeInTheDocument();
   expect(get(currentPlayerStore)).toEqual("black");
 });
 
