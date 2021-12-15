@@ -41,7 +41,7 @@
 
 <div
   data-testid={`box-${line}-${col}`}
-  class={`box${isPossibility ? " possible" : ""}`}
+  class={`${isPossibility} box${isPossibility ? " possible" : ""}`}
   on:click={() => handleBoxClick(line, col)}
 >
   {#if piece}
@@ -96,7 +96,7 @@
     min-width: 2.5rem;
     height: 2.5rem;
     min-height: 2.5rem;
-    border-radius: 1.25rem;
+    border-radius: 1.5rem;
     border: 3px dashed salmon;
     margin: auto;
   }

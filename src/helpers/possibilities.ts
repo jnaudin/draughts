@@ -76,12 +76,13 @@ export const getPossibilities = (
       nextCol < 0 ||
       nextCol > 9 ||
       nextLine < 0 ||
-      nextLine > 9
+      nextLine > 9 ||
+      (board[takeLine][takeCol].piece && board[nextLine][nextCol].piece)
     )
       return [];
 
     if (
-      board[takeLine][takeCol]?.piece?.color === oppositeColor &&
+      board[takeLine][takeCol].piece?.color === oppositeColor &&
       !board[nextLine][nextCol].piece
     )
       return [

@@ -243,3 +243,59 @@ it("calculates moves for the lady (backward)", async () => {
     },
   ]);
 });
+
+it("doesn't allow take when piece is blocking", async () => {
+  boardStore.reset();
+  boardStore.updateBox(4, 4, { color: "black", type: "pawn" });
+  boardStore.updateBox(5, 5, { color: "white", type: "pawn" });
+  boardStore.updateBox(7, 7, { color: "white", type: "lady" });
+
+  expect(getPossibilities({ line: 7, col: 7 })).toEqual([
+    {
+      coord: {
+        col: 6,
+        line: 6,
+      },
+      type: "move",
+    },
+    {
+      coord: {
+        col: 8,
+        line: 6,
+      },
+      type: "move",
+    },
+    {
+      coord: {
+        col: 9,
+        line: 5,
+      },
+      type: "move",
+    },
+  ]);
+
+  boardStore.updateBox(5, 5, { color: "black", type: "pawn" });
+  expect(getPossibilities({ line: 7, col: 7 })).toEqual([
+    {
+      coord: {
+        col: 6,
+        line: 6,
+      },
+      type: "move",
+    },
+    {
+      coord: {
+        col: 8,
+        line: 6,
+      },
+      type: "move",
+    },
+    {
+      coord: {
+        col: 9,
+        line: 5,
+      },
+      type: "move",
+    },
+  ]);
+});
