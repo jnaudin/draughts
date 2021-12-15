@@ -1,32 +1,27 @@
 <script lang="ts">
   import Grid from "./components/Grid/Grid.svelte";
+  import Instructions from "./components/Instructions/Instructions.svelte";
 </script>
 
 <main>
-  <h1>Jeu de dames !</h1>
+  <h1>Jeu de dames</h1>
   <Grid />
+  <Instructions />
 </main>
 
 <style>
   main {
     text-align: center;
     padding: 1em;
-    max-width: 240px;
     margin: 0 auto;
-	background-color: skyblue;
-	height: 100vh;
+    background-color: skyblue;
+    height: 100vh;
   }
 
   h1 {
-    color: #ff3e00;
+    color: brown;
     text-transform: uppercase;
     font-size: 4em;
-    font-weight: 100;
-  }
-
-  @media (min-width: 640px) {
-    main {
-      max-width: none;
-    }
+    font-weight: 500;
   }
 </style>

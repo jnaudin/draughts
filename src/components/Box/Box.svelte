@@ -27,13 +27,13 @@
     possibilities = value;
   });
 
-  let isSelected;
+  let isSelected: boolean;
   $: isSelected = line === selectedPiece?.line && col === selectedPiece?.col;
 
   let piece: CellType["piece"] | undefined;
   $: piece = board[line][col]?.piece;
 
-  let isPossibility;
+  let isPossibility: boolean;
   $: isPossibility = !!possibilities?.find(
     (p) => p.coord.line === line && p.coord.col === col
   );
