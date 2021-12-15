@@ -10,15 +10,13 @@ beforeEach(() => {
   boardStore.reset();
 });
 
-it("displays 50 of each color", async () => {
+it("alternates black and white", async () => {
   const { getAllByTestId } = render(Grid);
 
   const boxes = getAllByTestId("box-container");
-  boxes.forEach((box) => expect(box.className).toMatch(/white|black/));
-  expect(boxes.filter((box) => box.className.includes("white"))).toHaveLength(
-    50
-  );
-  expect(boxes.filter((box) => box.className.includes("black"))).toHaveLength(
-    50
+  boxes.forEach((box, index) =>
+    expect(box).toHaveClass(
+      (index + (Math.floor(index / 10) % 2)) % 2 ? "white" : "black"
+    )
   );
 });

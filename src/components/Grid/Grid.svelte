@@ -1,17 +1,10 @@
 <script lang="ts">
   import { boardStore } from "../../stores/stores";
-  import type { CellType } from "../../types";
   import Box from "../Box/Box.svelte";
-
-  let board: CellType[][];
-
-  boardStore.subscribe((value) => {
-    board = value;
-  });
 </script>
 
 <table>
-  {#each board as boxes, line}
+  {#each $boardStore as boxes, line}
     <tr>
       {#each boxes as box, col}
         <td data-testid="box-container" class={box.background}>
